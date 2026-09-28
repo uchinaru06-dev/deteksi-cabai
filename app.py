@@ -15,7 +15,7 @@ from ultralytics import YOLO
 TELEGRAM_TOKEN = "8852316590:AAHHeDhitPzzPIgVSCMlX8t-u_8DECNkfH8"
 TELEGRAM_CHAT_ID = "6169828628"
 
-# 🌐 IP ESP32-CAM (Sesuaikan dengan IP yang tampil di Serial Monitor Arduino IDE)
+# 🌐 IP ESP32-CAM (Ganti dengan link Ngrok publik jika server di Cloud, atau IP lokal jika satu WiFi)
 ESP32_STREAM_URL = "http://192.168.43.100:81/stream"
 
 MODEL_PATH = "best.pt"
@@ -136,7 +136,7 @@ def send_telegram_alert(label, confidence, frame):
 
 
 # ==========================================
-# 🎥 DETEKSI & STREAMING FLASK (MENGGUNAKAN URLLIB)
+# 🎥 DETEKSI & STREAMING FLASK
 # ==========================================
 def generate_frames():
   url = ESP32_STREAM_URL
@@ -155,8 +155,8 @@ def generate_frames():
 
     try:
       bytes_data += stream.read(1024)
-      a = bytes_data.find(b"\xff\xd8")  # Awal frame JPEG
-      b = bytes_data.find(b"\xff\xd9")  # Akhir frame JPEG
+      a = bytes_data.find(b"\xff\xd8")
+      b = bytes_data.find(b"\xff\xd9")
 
       if a != -1 and b != -1:
         jpg = bytes_data[a : b + 2]
@@ -245,7 +245,7 @@ def generate_frames():
 
 
 # ==========================================
-# 🌐 ROUTING SERVER FLASK
+# 🌐 ROUTING SERVER FLASK (Dioptimalkan untuk Mobile/APK)
 # ==========================================
 app = Flask(__name__)
 
@@ -255,16 +255,42 @@ def index():
   return """
     <html>
         <head>
-            <title>YOLO Web & Telegram Alert</title>
+            <title>Detektor Penyakit Cabai</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
-                body { text-align: center; font-family: Arial; background-color: #f4f4f4; }
-                img { width: 70%; border: 3px solid black; border-radius: 8px; margin-top: 10px; }
+                body { 
+                    margin: 0; 
+                    padding: 0; 
+                    background-color: #121212; 
+                    color: white; 
+                    font-family: Arial, sans-serif; 
+                    text-align: center; 
+                }
+                h2 { 
+                    margin: 15px 0 10px 0; 
+                    font-size: 20px; 
+                    color: #4CAF50; 
+                }
+                .container {
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+                img { 
+                    width: 95%; 
+                    max-width: 600px; 
+                    height: auto; 
+                    border: 2px solid #4CAF50; 
+                    border-radius: 8px; 
+                }
             </style>
         </head>
         <body>
-            <h2>🎥 YOLO Live Detection + Telegram Notifier</h2>
-            <img src="/video_feed">
-            <p>Tekan CTRL+C di terminal untuk stop</p>
+            <h2>🌿 Live YOLOv8 Detector</h2>
+            <div class="container">
+                <img src="/video_feed">
+            </div>
         </body>
     </html>
     """
