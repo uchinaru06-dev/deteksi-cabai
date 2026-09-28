@@ -1,6 +1,9 @@
-ultralytics
 streamlit
+ultralytics
+torch
+torchvision
 opencv-python-headless
 pillow
 numpy
 flask
+requests
